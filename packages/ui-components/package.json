@@ -1,0 +1,13 @@
+{
+  "name": "@fiadoauto/ui-components",
+  "version": "0.0.1",
+  "description": "Shared Vue 3 + Vuetify UI components for FiadoAuto platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "vue-tsc && vite build",
+    "dev": "vite build --watch"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

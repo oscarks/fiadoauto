@@ -182,6 +182,34 @@ database "PostgreSQL"
   utils
 ```
 
+## 5.1 Descrição das Aplicações
+
+### Backend
+
+* **server-api** — API principal da plataforma. Monólito modular em NestJS + Prisma + PostgreSQL, seguindo Clean Architecture. Contém todos os módulos de domínio (crédito, ledger, policy engine, convênios, etc.), core (auth, tenancy, RBAC, audit) e integrações (payment gateway, storage, IA client). Multitenancy por `provider_id`.
+
+### Frontend
+
+* **portal-solution** — Portal público da solução. Registro de novos providers, catálogo de planos SaaS, páginas institucionais. Vue 3 + Vuetify.
+* **portal-provider** — Portal do posto/oficina (white-label). Área operacional e administrativa do provider: gestão de convênios, crédito, faturas, frota, políticas antifraude e dashboards. Vue 3 + Vuetify.
+* **portal-conveniado** — Portal da empresa conveniada (white-label do provider). Visualização de consumo, faturas, gestão de veículos/motoristas, centros de custo. Vue 3 + Vuetify.
+* **portal-acception** — Portal administrativo SaaS. Gestão de tenants (providers), métricas da plataforma, suporte com impersonation auditada, billing SaaS. Vue 3 + Vuetify.
+
+### Mobile
+
+* **app-frentista** — App Flutter para frentistas. Autorização de abastecimento online, captura de evidências (foto hodômetro, geolocalização), recebimento de decisão (ALLOW/DENY/REVIEW) e step-up quando necessário.
+* **app-mecanico** — App Flutter para mecânicos (Fase 3). OS integrada ao crédito, captura de evidências (fotos, assinatura), diagnóstico assistido por IA.
+
+### Serviços
+
+* **ia-service** — Serviço de IA em Python/FastAPI (Fase 2+). Score de crédito (assíncrono), detecção de fraude transacional (síncrono leve), limite dinâmico. Stateless — recebe features do backend e retorna score + reason codes + model version.
+
+### Packages
+
+* **shared-types** — Tipos TypeScript compartilhados entre backend e frontends (DTOs, enums, interfaces de domínio).
+* **ui-components** — Componentes Vue 3 + Vuetify reutilizáveis entre os portais (ex: tabelas, filtros, cards de status).
+* **utils** — Funções utilitárias compartilhadas (formatação, validação, helpers de data/moeda).
+
 ---
 
 # 5️⃣ Multitenancy

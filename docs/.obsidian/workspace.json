@@ -1,0 +1,256 @@
+{
+  "main": {
+    "id": "15040b2b6cdb50e6",
+    "type": "split",
+    "children": [
+      {
+        "id": "68fcc2e56696124c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ff3bcd15fc21f174",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Architecture/Architecture Overview.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Architecture Overview"
+            }
+          },
+          {
+            "id": "615afa3a51c9a7fb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Features/Multitenancy/Requirements.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Requirements"
+            }
+          },
+          {
+            "id": "3943c66967aebb58",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Overview/Product.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Product"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "6d21629ad60e7b5f",
+    "type": "split",
+    "children": [
+      {
+        "id": "007f42e2e11eafef",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5803b5a93653a871",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "cfae8fce7ff21608",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "backend",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "dcc6ac7adab00ec6",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "4ada8c5e48f7b81c",
+    "type": "split",
+    "children": [
+      {
+        "id": "8cc828c4c14020a4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "688a8b2e41b03290",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "FiadoAuto.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for FiadoAuto"
+            }
+          },
+          {
+            "id": "d3c1ce8aa39d5249",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "FiadoAuto.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from FiadoAuto"
+            }
+          },
+          {
+            "id": "e721ebaf2c729358",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "f52c9eb1309661c7",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "6c4ffce3c6ba7cc4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "FiadoAuto.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of FiadoAuto"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "3943c66967aebb58",
+  "lastOpenFiles": [
+    "Overview/Backlog.md",
+    "Overview/Glossary.md",
+    "Overview/Product.md",
+    "Features/Multitenancy/Requirements.md",
+    "Features/SAAS/Requirements.md",
+    "Architecture/Architecture Overview.md",
+    "Overview/Modules.md",
+    "Features/Antifraude-Regras Deterministicas/Reqirements.md",
+    "Overview/Risk Analysis.md",
+    "Features/SASS-Provider/Requirements.md",
+    "Overview/Solucao.md",
+    "Architecture/ADR/ADR-011 — Trial e suspensão configuráveis por plano-política.md",
+    "Architecture/ADR/ADR-010 — Billing SaaS e Billing Provider na mesma estrutura, escopos distintos.md",
+    "Architecture/ADR/ADR-009 — White-label a partir do plano Growth.md",
+    "Architecture/ADR/ADR-008 — App frentista online obrigatório; offline só pré-capturad.md",
+    "Architecture/ADR/ADR-007 — IA separada em Python - FastAPI com payload stateless.md",
+    "Architecture/ADR/ADR-006 — Policy Engine determinístico no backend (Fase 1).md",
+    "Architecture/ADR/ADR-005 — Ledger append-only com saldos materializados.md",
+    "Architecture/ADR/ADR-004 — Arquitetura monolito modular no backend (NestJS).md",
+    "Architecture/ADR/ADR-003 — Multitenancy Nível 2 - Empresa Conveniado.md",
+    "Architecture/ADR/ADR-002 — Multitenancy - Provider como tenant, Empresa como escopo.md",
+    "Architecture/ADR/ADR-001 — Multitenancy Nível 1 (Provider).md",
+    "Architecture/ADR",
+    "Features/Multitenancy",
+    "Features/SASS-Provider",
+    "Features/SAAS",
+    "Features/Antifraude-Regras Deterministicas",
+    "Features/Billing",
+    "Features",
+    "Architecture",
+    "Overview",
+    "architecture/Overview.md",
+    "Produto.md",
+    "Produto.backup.md",
+    "features/multitenancy/solution.md",
+    "features/antifraude-deterministica"
+  ]
+}

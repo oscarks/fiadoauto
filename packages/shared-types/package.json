@@ -1,0 +1,16 @@
+{
+  "name": "@fiadoauto/shared-types",
+  "version": "0.0.1",
+  "description": "Shared TypeScript types for FiadoAuto platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

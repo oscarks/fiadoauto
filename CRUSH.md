@@ -1,0 +1,1 @@
+/home/oscar/work/projetos/spec-driven/curso/fiadoauto/CLAUDE.md

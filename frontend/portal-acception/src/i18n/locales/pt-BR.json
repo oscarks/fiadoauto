@@ -1,0 +1,135 @@
+{
+  "common": {
+    "appName": "FiadoAuto",
+    "actions": {
+      "close": "Fechar",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "back": "Voltar",
+      "confirm": "Confirmar",
+      "enter": "Entrar",
+      "search": "Buscar",
+      "actions": "Ações",
+      "detail": "Detalhe"
+    }
+  },
+  "layout": {
+    "title": "Portal Acception",
+    "logout": "Sair",
+    "menu": {
+      "dashboard": "Dashboard",
+      "providers": "Providers",
+      "auditLogs": "Logs de Auditoria"
+    }
+  },
+  "views": {
+    "login": {
+      "title": "Bem-vindo",
+      "subtitle": "Acesse sua conta",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Senha",
+      "submit": "Entrar",
+      "forgotPassword": "Esqueci minha senha"
+    },
+    "forgotPassword": {
+      "title": "Recuperar Senha",
+      "subtitle": "Informe seu e-mail para receber instruções",
+      "submit": "Enviar",
+      "success": "Se o e-mail existir, as instruções foram enviadas"
+    },
+    "resetPassword": {
+      "title": "Nova Senha",
+      "newPasswordLabel": "Nova senha",
+      "confirmPasswordLabel": "Confirmar senha",
+      "submit": "Alterar senha",
+      "success": "Senha alterada com sucesso"
+    },
+    "verifyEmail": {
+      "verifying": "Verificando e-mail...",
+      "success": "E-mail verificado com sucesso",
+      "error": "Erro ao verificar e-mail",
+      "goToLogin": "Ir para login"
+    },
+    "providers": {
+      "title": "Providers",
+      "newProvider": "Novo Provider",
+      "messages": {
+        "created": "Provider criado com sucesso",
+        "statusUpdated": "Status atualizado com sucesso"
+      },
+      "fields": {
+        "tradeName": "Nome Fantasia",
+        "legalName": "Razão Social",
+        "cnpj": "CNPJ",
+        "email": "E-mail",
+        "phone": "Telefone",
+        "responsibleName": "Responsável",
+        "status": "Status",
+        "createdAt": "Criado em",
+        "street": "Rua",
+        "number": "Número",
+        "complement": "Complemento",
+        "neighborhood": "Bairro",
+        "city": "Cidade",
+        "state": "Estado",
+        "zipCode": "CEP"
+      },
+      "create": {
+        "title": "Novo Provider",
+        "adminSection": "Dados do Administrador",
+        "addressSection": "Endereço"
+      },
+      "detail": {
+        "changeStatus": "Alterar Status",
+        "confirmStatusChange": "Tem certeza que deseja alterar o status para {status}?"
+      },
+      "status": {
+        "PENDING_VERIFICATION": "Pendente",
+        "TRIAL_ACTIVE": "Trial Ativo",
+        "ACTIVE": "Ativo",
+        "PAST_DUE": "Em atraso",
+        "SUSPENDED": "Suspenso",
+        "CANCELED": "Cancelado"
+      }
+    },
+    "users": {
+      "fields": {
+        "name": "Nome",
+        "email": "E-mail"
+      }
+    },
+    "auditLogs": {
+      "title": "Logs de Auditoria",
+      "fields": {
+        "action": "Ação",
+        "entity": "Entidade",
+        "user": "Usuário",
+        "date": "Data/Hora"
+      },
+      "detail": {
+        "title": "Detalhe do Log",
+        "oldValue": "Valor Anterior",
+        "newValue": "Novo Valor"
+      }
+    },
+    "dashboard": {
+      "totalProviders": "Total Providers",
+      "activeProviders": "Ativos",
+      "trialProviders": "Em Trial",
+      "blockedProviders": "Bloqueados"
+    }
+  },
+  "validation": {
+    "required": "Campo obrigatório",
+    "emailInvalid": "E-mail inválido",
+    "passwordMin": "Mínimo 8 caracteres",
+    "passwordUppercase": "Deve conter ao menos 1 letra maiúscula",
+    "passwordNumber": "Deve conter ao menos 1 número",
+    "passwordMismatch": "As senhas não coincidem",
+    "cnpjInvalid": "CNPJ inválido"
+  },
+  "errors": {
+    "default": "Ocorreu um erro inesperado",
+    "login": "Erro ao fazer login"
+  }
+}

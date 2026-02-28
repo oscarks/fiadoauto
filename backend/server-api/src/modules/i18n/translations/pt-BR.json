@@ -1,0 +1,23 @@
+{
+  "auth": {
+    "invalid_credentials": "Credenciais inválidas.",
+    "email_not_verified": "Email não verificado.",
+    "email_verified": "Email verificado com sucesso.",
+    "password_reset": "Senha redefinida com sucesso."
+  },
+  "validation": {
+    "email_required": "Email é obrigatório.",
+    "password_min_length": "Senha deve ter no mínimo 8 caracteres."
+  },
+  "tenancy": {
+    "scope_error": "Escopo de tenant inválido.",
+    "provider_required": "Contexto de provider necessário."
+  },
+  "rbac": {
+    "forbidden": "Acesso não autorizado para este role.",
+    "insufficient_permissions": "Permissões insuficientes."
+  },
+  "common": {
+    "success": "Operação realizada com sucesso."
+  }
+}

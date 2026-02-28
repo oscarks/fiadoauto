@@ -1,10 +1,8 @@
 <template>
-  <v-app>
-    <v-main>
-      <router-view />
-    </v-main>
-  </v-app>
+  <router-view />
+  <GlobalSnackbar />
 </template>
 
 <script setup lang="ts">
+import GlobalSnackbar from './presentation/components/common/GlobalSnackbar.vue';
 </script>

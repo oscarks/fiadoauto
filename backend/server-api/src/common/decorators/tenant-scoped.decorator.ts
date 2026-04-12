@@ -6,7 +6,7 @@ interface RequestWithAuth {
 }
 
 export const TenantScoped = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): string | undefined => {
+  (_data: unknown, ctx: ExecutionContext): string | null | undefined => {
     const request = ctx.switchToHttp().getRequest<RequestWithAuth>();
     return request.authContext?.providerId;
   },

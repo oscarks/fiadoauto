@@ -12,6 +12,9 @@ import { AuthService } from '../application/auth.service';
 import type { AuthContext } from '../../../../common/types/auth-context.type';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { ConfirmEmailDto } from './dto/confirm-email.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 interface RequestWithAuth {
   ip: string;
@@ -47,16 +50,36 @@ export class AuthController {
   @Post('logout')
   async logout(@Req() request: RequestWithAuth): Promise<void> {
     const userId = request.authContext?.sub;
-
-    if (!userId) {
-      return;
-    }
-
+    if (!userId) return;
     await this.authService.logout({ userId });
   }
 
   @Get('me')
   me(@Req() request: RequestWithAuth) {
     return this.authService.me(request.authContext!.sub);
+  }
+
+  @Public()
+  @HttpCode(200)
+  @Post('confirm-email')
+  confirmEmail(@Body() body: ConfirmEmailDto) {
+    return this.authService.confirmEmail({ token: body.token });
+  }
+
+  @Public()
+  @HttpCode(200)
+  @Post('forgot-password')
+  forgotPassword(@Body() body: ForgotPasswordDto) {
+    return this.authService.forgotPassword({ email: body.email });
+  }
+
+  @Public()
+  @HttpCode(200)
+  @Post('reset-password')
+  resetPassword(@Body() body: ResetPasswordDto) {
+    return this.authService.resetPassword({
+      token: body.token,
+      newPassword: body.newPassword,
+    });
   }
 }

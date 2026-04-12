@@ -43,12 +43,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Prompts/Development.md",
+                "file": "Features/F1-Implementation-Plan.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Development"
+              "title": "F1-Implementation-Plan"
             }
           }
         ],
@@ -217,24 +217,27 @@
   },
   "active": "3943c66967aebb58",
   "lastOpenFiles": [
-    "Features/F1-Implementation-Plan.md",
     "Features/Phase1-Specification.md",
+    "Features/F1-Implementation-Plan.md",
+    "Features/F1-Implementation-Plan.md.tmp.1026955.1775960715362",
+    "Features/Phase1-Specification.md.tmp.1026955.1775956099854",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955918449",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955687640",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955639359",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955610241",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955601499",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955593748",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955583479",
+    "Features/Phase1-Specification.md.tmp.1026955.1775955566728",
+    "Prompts/Development.md",
     "Guidelines/ui-templates.md",
     "Features/F1-S1-Review.md",
-    "Features/F1-S1-Review.md.tmp.240771.1772851161051",
-    "Features/F1-S1-Review.md.tmp.240771.1772851156321",
-    "Features/F1-S1-Review.md.tmp.240771.1772850510059",
-    "Features/F1-Implementation-Plan.md.tmp.240771.1772847930456",
-    "Guidelines",
     "Overview/Backlog.md",
-    "Features/Phase1-Specification.md.tmp.240771.1772844779853",
     "Overview/Product.md",
-    "Overview/Product.md.tmp.240771.1772841663744",
     "Architecture/Architecture Overview.md",
     "Overview/Risk Analysis.md",
     "Overview/Modules.md",
     "Overview/Glossary.md",
-    "Prompts/Development.md",
     "Prompts/Review.md",
     "Prompts/Setup.md",
     "Features/Multitenancy/Requirements.md",
@@ -248,9 +251,6 @@
     "Architecture/ADR/ADR-008 — App frentista online obrigatório; offline só pré-capturad.md",
     "Architecture/ADR/ADR-007 — IA separada em Python - FastAPI com payload stateless.md",
     "Architecture/ADR/ADR-006 — Policy Engine determinístico no backend (Fase 1).md",
-    "Architecture/ADR/ADR-005 — Ledger append-only com saldos materializados.md",
-    "Architecture/ADR",
-    "Features/Multitenancy",
-    "Features/SASS-Provider"
+    "Architecture/ADR/ADR-005 — Ledger append-only com saldos materializados.md"
   ]
 }

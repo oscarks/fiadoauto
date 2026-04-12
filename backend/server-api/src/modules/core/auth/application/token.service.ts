@@ -5,7 +5,7 @@ import { ACCESS_TOKEN_TTL_SECONDS } from '../../../../common/constants/auth.cons
 
 interface AccessTokenPayload {
   sub: string;
-  providerId: string;
+  providerId: string | null;
   conveniadoId?: string | null;
   actorType: string;
   roles: string[];

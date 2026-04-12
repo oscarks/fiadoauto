@@ -14,7 +14,8 @@ describe('AuditService', () => {
 
     await service.log({
       providerId: 'provider-1',
-      userId: 'user-1',
+      actorUserId: 'user-1',
+      actorType: 'PROVIDER_USER',
       action: 'AUTH_LOGIN',
       entityType: 'user',
       details: { source: 'unit-test' },
@@ -24,7 +25,7 @@ describe('AuditService', () => {
     expect(repository.create).toHaveBeenCalledWith(
       expect.objectContaining({
         providerId: 'provider-1',
-        userId: 'user-1',
+        actorUserId: 'user-1',
         action: 'AUTH_LOGIN',
       }),
     );

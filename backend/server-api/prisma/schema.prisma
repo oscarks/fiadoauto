@@ -7,66 +7,205 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ──────────────────────────────────────────
+// ENUMS
+// ──────────────────────────────────────────
+
 enum ProviderStatus {
-  PENDING
-  TRIAL
+  PENDING_VERIFICATION
+  TRIAL_ACTIVE
   ACTIVE
-  SUSPENDED
-  BLOCKED
+  SUSPENDED_SAAS_FULL
+  SUSPENDED_SAAS_AUTH_ONLY
+  CANCELLED
 }
 
 enum UserStatus {
-  PENDING
+  PENDING_EMAIL_CONFIRMATION
   ACTIVE
   INACTIVE
 }
 
 enum ActorType {
-  ACCEPTION_USER
+  ACCEPTION_ADMIN
   PROVIDER_USER
   CONVENIADO_USER
 }
 
-model Provider {
-  id          String         @id @default(uuid()) @db.Uuid
-  name        String
-  tradeName   String         @map("trade_name")
-  cnpj        String         @unique
-  email       String
-  phone       String
-  status      ProviderStatus @default(PENDING)
-  planId      String?        @map("plan_id") @db.Uuid
-  trialEndsAt DateTime?      @map("trial_ends_at")
-  activatedAt DateTime?      @map("activated_at")
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
+enum WhitelabelType {
+  NONE
+  SUBDOMAIN
+  CUSTOM_DOMAIN
+}
 
-  users         User[]
-  refreshTokens RefreshToken[]
-  auditLogs     AuditLog[]
+enum SuspensionMode {
+  FULL_BLOCK
+  BLOCK_AUTH_ONLY
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  SUSPENDED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  OPEN
+  PAST_DUE
+  PAID
+  CANCELLED
+}
+
+enum DomainType {
+  SUBDOMAIN
+  CUSTOM
+}
+
+enum DomainStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  FAILED
+}
+
+enum ConveniadoStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  BLOCKED
+  DELINQUENT
+  SUSPENDED
+  CLOSED
+}
+
+enum VehicleType {
+  CAR
+  MOTO
+  TRUCK
+  VAN
+  BUS
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  STOLEN
+}
+
+enum GeneralStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CreditAccountStatus {
+  ACTIVE
+  BLOCKED
+  CLOSED
+}
+
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+  REVERSAL
+  ADJUSTMENT
+  FEE
+}
+
+enum ReservationStatus {
+  ACTIVE
+  CONSUMED
+  EXPIRED
+  CANCELLED
+}
+
+enum DecisionType {
+  ALLOW
+  DENY
+  REVIEW
+}
+
+enum RefuelStatus {
+  PENDING_AUTHORIZATION
+  AUTHORIZED
+  REVIEW_PENDING
+  POSTED
+  DENIED
+  CANCELLED
+  REVERSED
+}
+
+enum PolicyScopeType {
+  PROVIDER
+  CONVENIADO
+}
+
+enum ProviderInvoiceStatus {
+  OPEN
+  PAST_DUE
+  PAID
+  PARTIALLY_PAID
+  CANCELLED
+}
+
+enum EvidenceType {
+  ODOMETER_PHOTO
+  GEO_PROOF
+  RECEIPT
+}
+
+// ──────────────────────────────────────────
+// CORE: Provider, User, Auth, Audit
+// ──────────────────────────────────────────
+
+model Provider {
+  id              String         @id @default(uuid()) @db.Uuid
+  legalName       String         @map("legal_name")
+  tradeName       String         @map("trade_name")
+  cnpj            String         @unique
+  email           String
+  phone           String?
+  status          ProviderStatus @default(PENDING_VERIFICATION)
+  timezone        String         @default("America/Sao_Paulo")
+  addressJson     Json?          @map("address_json")
+  geofenceLat     Float?         @map("geofence_lat")
+  geofenceLng     Float?         @map("geofence_lng")
+  geofenceRadiusM Int?           @map("geofence_radius_m")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  users           User[]
+  domains         ProviderDomain[]
+  subscription    Subscription?
+  conveniados     Conveniado[]
+  products        Product[]
+  convenioplans   Convenioplan[]
+  policyConfigs   PolicyConfig[]
+  managerPin      ProviderManagerPin?
+  refreshTokens   RefreshToken[]
 
   @@map("providers")
 }
 
 model User {
-  id              String      @id @default(uuid()) @db.Uuid
+  id              String     @id @default(uuid()) @db.Uuid
   name            String
-  email           String      @unique
-  passwordHash    String      @map("password_hash")
-  providerId      String      @map("provider_id") @db.Uuid
-  conveniadoId    String?     @map("conveniado_id") @db.Uuid
-  status          UserStatus  @default(PENDING)
-  actorType       ActorType   @map("actor_type")
-  activationToken String?     @map("activation_token")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
+  email           String
+  passwordHash    String     @map("password_hash")
+  providerId      String?    @map("provider_id") @db.Uuid
+  conveniadoId    String?    @map("conveniado_id") @db.Uuid
+  status          UserStatus @default(PENDING_EMAIL_CONFIRMATION)
+  actorType       ActorType  @map("actor_type")
+  activationToken String?    @map("activation_token")
+  tokenExpiresAt  DateTime?  @map("token_expires_at")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
 
-  provider      Provider       @relation(fields: [providerId], references: [id])
+  provider      Provider?      @relation(fields: [providerId], references: [id])
+  conveniado    Conveniado?    @relation(fields: [conveniadoId], references: [id])
   roles         UserRole[]
   refreshTokens RefreshToken[]
-  auditLogs     AuditLog[]
 
-  @@index([providerId])
+  @@unique([providerId, email])
   @@index([conveniadoId])
   @@map("users")
 }
@@ -93,16 +232,16 @@ model UserRole {
 }
 
 model RefreshToken {
-  id        String    @id @default(uuid()) @db.Uuid
-  tokenHash String    @unique @map("token_hash")
-  userId    String    @map("user_id") @db.Uuid
-  providerId String   @map("provider_id") @db.Uuid
-  expiresAt DateTime  @map("expires_at")
-  revokedAt DateTime? @map("revoked_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+  id         String    @id @default(uuid()) @db.Uuid
+  tokenHash  String    @unique @map("token_hash")
+  userId     String    @map("user_id") @db.Uuid
+  providerId String?   @map("provider_id") @db.Uuid
+  expiresAt  DateTime  @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
 
-  user     User     @relation(fields: [userId], references: [id])
-  provider Provider @relation(fields: [providerId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+  provider Provider? @relation(fields: [providerId], references: [id])
 
   @@index([userId])
   @@index([providerId])
@@ -110,20 +249,578 @@ model RefreshToken {
 }
 
 model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  providerId  String?  @map("provider_id") @db.Uuid
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  actorType   String   @map("actor_type")
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  detailsJson Json     @map("details_json")
+  ipAddress   String?  @map("ip_address")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([providerId, createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_log")
+}
+
+// ──────────────────────────────────────────
+// SAAS: Plans, Subscriptions, Invoices
+// ──────────────────────────────────────────
+
+model SaasPlan {
+  id                   String         @id @default(uuid()) @db.Uuid
+  name                 String
+  code                 String         @unique
+  baseMonthlyPrice     Decimal        @map("base_monthly_price") @db.Decimal(10, 2)
+  maxConvenios         Int?           @map("max_convenios")
+  maxVehicles          Int?           @map("max_vehicles")
+  maxTransactionsMonth Int?           @map("max_transactions_month")
+  maxPlansProvider     Int?           @map("max_plans_provider")
+  extraTxPrice         Decimal?       @map("extra_tx_price") @db.Decimal(10, 2)
+  whitelabelType       WhitelabelType @default(NONE) @map("whitelabel_type")
+  trialDays            Int            @default(14) @map("trial_days")
+  trialMaxTransactions Int?           @map("trial_max_transactions")
+  suspensionMode       SuspensionMode @default(FULL_BLOCK) @map("suspension_mode")
+  gracePeriodDays      Int            @default(5) @map("grace_period_days")
+  isActive             Boolean        @default(true) @map("is_active")
+  createdAt            DateTime       @default(now()) @map("created_at")
+
+  subscriptions Subscription[]
+
+  @@map("saas_plans")
+}
+
+model Subscription {
+  id                 String             @id @default(uuid()) @db.Uuid
+  providerId         String             @unique @map("provider_id") @db.Uuid
+  planId             String             @map("plan_id") @db.Uuid
+  status             SubscriptionStatus @default(TRIAL)
+  trialEndsAt        DateTime?          @map("trial_ends_at")
+  currentPeriodStart DateTime?          @map("current_period_start")
+  currentPeriodEnd   DateTime?          @map("current_period_end")
+  cancelledAt        DateTime?          @map("cancelled_at")
+  createdAt          DateTime           @default(now()) @map("created_at")
+
+  provider Provider      @relation(fields: [providerId], references: [id])
+  plan     SaasPlan      @relation(fields: [planId], references: [id])
+  invoices SaasInvoice[]
+
+  @@map("subscriptions")
+}
+
+model SaasInvoice {
+  id             String        @id @default(uuid()) @db.Uuid
+  providerId     String        @map("provider_id") @db.Uuid
+  subscriptionId String        @map("subscription_id") @db.Uuid
+  periodStart    DateTime      @map("period_start")
+  periodEnd      DateTime      @map("period_end")
+  baseAmount     Decimal       @map("base_amount") @db.Decimal(10, 2)
+  usageAmount    Decimal       @default(0) @map("usage_amount") @db.Decimal(10, 2)
+  totalAmount    Decimal       @map("total_amount") @db.Decimal(10, 2)
+  status         InvoiceStatus @default(OPEN)
+  dueDate        DateTime      @map("due_date")
+  paidAt         DateTime?     @map("paid_at")
+  externalRef    String?       @map("external_ref")
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@index([providerId, periodStart])
+  @@map("saas_invoices")
+}
+
+// ──────────────────────────────────────────
+// PROVIDER: Domains, Manager PIN
+// ──────────────────────────────────────────
+
+model ProviderDomain {
+  id         String       @id @default(uuid()) @db.Uuid
+  providerId String       @map("provider_id") @db.Uuid
+  domain     String       @unique
+  type       DomainType
+  status     DomainStatus @default(PENDING_VERIFICATION)
+  verifiedAt DateTime?    @map("verified_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@map("provider_domains")
+}
+
+model ProviderManagerPin {
   id         String   @id @default(uuid()) @db.Uuid
-  providerId String   @map("provider_id") @db.Uuid
-  userId     String   @map("user_id") @db.Uuid
-  action     String
-  entityType String   @map("entity_type")
-  entityId   String?  @map("entity_id") @db.Uuid
-  details    Json
-  ipAddress  String   @map("ip_address")
+  providerId String   @unique @map("provider_id") @db.Uuid
+  pinHash    String   @map("pin_hash")
+  updatedAt  DateTime @updatedAt @map("updated_at")
   createdAt  DateTime @default(now()) @map("created_at")
 
   provider Provider @relation(fields: [providerId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
 
-  @@index([providerId, createdAt])
-  @@index([userId, createdAt])
-  @@map("audit_log")
+  @@map("provider_manager_pins")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Catalog (Products, Prices)
+// ──────────────────────────────────────────
+
+model Product {
+  id         String        @id @default(uuid()) @db.Uuid
+  providerId String        @map("provider_id") @db.Uuid
+  code       String
+  name       String
+  unitType   String        @default("LITER") @map("unit_type")
+  status     GeneralStatus @default(ACTIVE)
+  createdAt  DateTime      @default(now()) @map("created_at")
+
+  provider   Provider   @relation(fields: [providerId], references: [id])
+  priceLists PriceList[]
+  vehicleAllowedProducts VehicleAllowedProduct[]
+
+  @@unique([providerId, code])
+  @@map("products")
+}
+
+model PriceList {
+  id           String    @id @default(uuid()) @db.Uuid
+  providerId   String    @map("provider_id") @db.Uuid
+  productId    String    @map("product_id") @db.Uuid
+  pricePerUnit Decimal   @map("price_per_unit") @db.Decimal(10, 4)
+  validFrom    DateTime  @map("valid_from")
+  validTo      DateTime? @map("valid_to")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([providerId, productId, validFrom])
+  @@map("price_lists")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Convenios, Plans Provider
+// ──────────────────────────────────────────
+
+model Convenioplan {
+  id                       String  @id @default(uuid()) @db.Uuid
+  providerId               String  @map("provider_id") @db.Uuid
+  name                     String
+  version                  Int     @default(1)
+  isActive                 Boolean @default(true) @map("is_active")
+  // Credito
+  creditLimit              Decimal @map("credit_limit") @db.Decimal(12, 2)
+  vehicleCreditLimit       Decimal? @map("vehicle_credit_limit") @db.Decimal(12, 2)
+  periodLimitsJson         Json?   @map("period_limits_json")
+  paymentDueDays           Int     @default(30) @map("payment_due_days")
+  lateFeePercent           Decimal @default(2) @map("late_fee_percent") @db.Decimal(5, 2)
+  lateInterestPercent      Decimal @default(1) @map("late_interest_percent") @db.Decimal(5, 2)
+  lockAfterDays            Int     @default(10) @map("lock_after_days")
+  // Governanca
+  requireDriver            Boolean @default(false) @map("require_driver")
+  requireCostCenter        Boolean @default(false) @map("require_cost_center")
+  allowedDaysJson          Json?   @map("allowed_days_json")
+  allowedTimeStart         String? @map("allowed_time_start")
+  allowedTimeEnd           String? @map("allowed_time_end")
+  allowedProductsJson      Json?   @map("allowed_products_json")
+  minRefuelIntervalMinutes Int     @default(60) @map("min_refuel_interval_minutes")
+  // Antifraude
+  requireOdometer          Boolean @default(true) @map("require_odometer")
+  maxTxAmount              Decimal? @map("max_tx_amount") @db.Decimal(12, 2)
+  geofenceRequired         Boolean @default(false) @map("geofence_required")
+  // Comercial
+  discountPercent          Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
+  adminFeePercent          Decimal @default(0) @map("admin_fee_percent") @db.Decimal(5, 2)
+  createdAt                DateTime @default(now()) @map("created_at")
+
+  provider    Provider     @relation(fields: [providerId], references: [id])
+  conveniados Conveniado[]
+
+  @@index([providerId])
+  @@map("convenioplans")
+}
+
+model Conveniado {
+  id                 String           @id @default(uuid()) @db.Uuid
+  providerId         String           @map("provider_id") @db.Uuid
+  planId             String           @map("plan_id") @db.Uuid
+  legalName          String           @map("legal_name")
+  cnpj               String
+  email              String
+  phone              String?
+  addressJson        Json?            @map("address_json")
+  responsibleName    String           @map("responsible_name")
+  status             ConveniadoStatus @default(PENDING_APPROVAL)
+  billingCycleDay    Int              @default(5) @map("billing_cycle_day")
+  activationToken    String?          @map("activation_token")
+  tokenExpiresAt     DateTime?        @map("token_expires_at")
+  contractAcceptedAt DateTime?        @map("contract_accepted_at")
+  contractIpAddress  String?          @map("contract_ip_address")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+
+  provider       Provider          @relation(fields: [providerId], references: [id])
+  plan           Convenioplan      @relation(fields: [planId], references: [id])
+  users          User[]
+  vehicles       Vehicle[]
+  drivers        Driver[]
+  costCenters    CostCenter[]
+  creditAccount  CreditAccount?
+  invoices       ProviderInvoice[]
+
+  @@unique([providerId, cnpj])
+  @@map("conveniados")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Fleet
+// ──────────────────────────────────────────
+
+model Vehicle {
+  id                 String        @id @default(uuid()) @db.Uuid
+  providerId         String        @map("provider_id") @db.Uuid
+  conveniadoId       String        @map("conveniado_id") @db.Uuid
+  plate              String
+  type               VehicleType
+  tankCapacityLiters Float?        @map("tank_capacity_liters")
+  vehicleCreditLimit Decimal?      @map("vehicle_credit_limit") @db.Decimal(12, 2)
+  status             VehicleStatus @default(ACTIVE)
+  lastOdometerKm     Float?        @map("last_odometer_km")
+  lastRefuelAt       DateTime?     @map("last_refuel_at")
+  lastRefuelLiters   Float?        @map("last_refuel_liters")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  conveniado      Conveniado              @relation(fields: [conveniadoId], references: [id])
+  allowedProducts VehicleAllowedProduct[]
+  transactions    RefuelTransaction[]
+
+  @@unique([providerId, plate])
+  @@index([conveniadoId])
+  @@map("vehicles")
+}
+
+model VehicleAllowedProduct {
+  vehicleId String @map("vehicle_id") @db.Uuid
+  productId String @map("product_id") @db.Uuid
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@id([vehicleId, productId])
+  @@map("vehicle_allowed_products")
+}
+
+model Driver {
+  id           String        @id @default(uuid()) @db.Uuid
+  providerId   String        @map("provider_id") @db.Uuid
+  conveniadoId String        @map("conveniado_id") @db.Uuid
+  name         String
+  document     String?
+  status       GeneralStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  conveniado Conveniado @relation(fields: [conveniadoId], references: [id])
+
+  @@index([providerId, conveniadoId])
+  @@map("drivers")
+}
+
+model CostCenter {
+  id           String        @id @default(uuid()) @db.Uuid
+  providerId   String        @map("provider_id") @db.Uuid
+  conveniadoId String        @map("conveniado_id") @db.Uuid
+  code         String
+  name         String
+  status       GeneralStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  conveniado Conveniado @relation(fields: [conveniadoId], references: [id])
+
+  @@unique([providerId, conveniadoId, code])
+  @@map("cost_centers")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Credit, Ledger, Reservations
+// ──────────────────────────────────────────
+
+model CreditAccount {
+  id             String              @id @default(uuid()) @db.Uuid
+  providerId     String              @map("provider_id") @db.Uuid
+  conveniadoId   String              @unique @map("conveniado_id") @db.Uuid
+  creditLimit    Decimal             @map("credit_limit") @db.Decimal(12, 2)
+  currentBalance Decimal             @default(0) @map("current_balance") @db.Decimal(12, 2)
+  reservedAmount Decimal             @default(0) @map("reserved_amount") @db.Decimal(12, 2)
+  status         CreditAccountStatus @default(ACTIVE)
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  createdAt      DateTime            @default(now()) @map("created_at")
+
+  conveniado   Conveniado        @relation(fields: [conveniadoId], references: [id])
+  ledgerEntries LedgerEntry[]
+  reservations  CreditReservation[]
+
+  @@index([providerId])
+  @@map("credit_accounts")
+}
+
+model LedgerEntry {
+  id              String          @id @default(uuid()) @db.Uuid
+  providerId      String          @map("provider_id") @db.Uuid
+  conveniadoId    String          @map("conveniado_id") @db.Uuid
+  vehicleId       String?         @map("vehicle_id") @db.Uuid
+  creditAccountId String          @map("credit_account_id") @db.Uuid
+  type            LedgerEntryType
+  amount          Decimal         @db.Decimal(12, 2)
+  currency        String          @default("BRL")
+  referenceType   String?         @map("reference_type")
+  referenceId     String?         @map("reference_id")
+  description     String?
+  metadataJson    Json?           @map("metadata_json")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  creditAccount CreditAccount @relation(fields: [creditAccountId], references: [id])
+
+  @@index([providerId, conveniadoId, createdAt(sort: Desc)])
+  @@map("ledger_entries")
+}
+
+model CreditReservation {
+  id              String            @id @default(uuid()) @db.Uuid
+  providerId      String            @map("provider_id") @db.Uuid
+  conveniadoId    String            @map("conveniado_id") @db.Uuid
+  vehicleId       String?           @map("vehicle_id") @db.Uuid
+  creditAccountId String            @map("credit_account_id") @db.Uuid
+  externalTxId    String            @map("external_tx_id")
+  amount          Decimal           @db.Decimal(12, 2)
+  status          ReservationStatus @default(ACTIVE)
+  expiresAt       DateTime          @map("expires_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+
+  creditAccount CreditAccount @relation(fields: [creditAccountId], references: [id])
+
+  @@unique([providerId, externalTxId])
+  @@map("credit_reservations")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Refuel, Authorization, Antifraud
+// ──────────────────────────────────────────
+
+model RefuelTransaction {
+  id              String       @id @default(uuid()) @db.Uuid
+  providerId      String       @map("provider_id") @db.Uuid
+  externalTxId    String       @map("external_tx_id")
+  conveniadoId    String       @map("conveniado_id") @db.Uuid
+  vehicleId       String       @map("vehicle_id") @db.Uuid
+  driverId        String?      @map("driver_id") @db.Uuid
+  costCenterId    String?      @map("cost_center_id") @db.Uuid
+  operatorUserId  String       @map("operator_user_id") @db.Uuid
+  deviceId        String?      @map("device_id")
+  productId       String       @map("product_id") @db.Uuid
+  liters          Float
+  totalAmount     Decimal      @map("total_amount") @db.Decimal(12, 2)
+  pricePerLiter   Decimal      @map("price_per_liter") @db.Decimal(10, 4)
+  odometerKm      Float?       @map("odometer_km")
+  geoLat          Float?       @map("geo_lat")
+  geoLng          Float?       @map("geo_lng")
+  status          RefuelStatus @default(PENDING_AUTHORIZATION)
+  reservationId   String?      @map("reservation_id") @db.Uuid
+  ledgerEntryId   String?      @map("ledger_entry_id") @db.Uuid
+  authDecisionId  String?      @map("auth_decision_id") @db.Uuid
+  createdAt       DateTime     @default(now()) @map("created_at")
+  completedAt     DateTime?    @map("completed_at")
+
+  vehicle   Vehicle         @relation(fields: [vehicleId], references: [id])
+  evidences EvidenceAsset[]
+
+  @@unique([providerId, externalTxId])
+  @@index([providerId, conveniadoId, createdAt(sort: Desc)])
+  @@index([providerId, vehicleId, createdAt(sort: Desc)])
+  @@index([providerId, operatorUserId, createdAt(sort: Desc)])
+  @@map("refuel_transactions")
+}
+
+model AuthorizationDecision {
+  id                  String       @id @default(uuid()) @db.Uuid
+  providerId          String       @map("provider_id") @db.Uuid
+  externalTxId        String       @map("external_tx_id")
+  conveniadoId        String       @map("conveniado_id") @db.Uuid
+  vehicleId           String?      @map("vehicle_id") @db.Uuid
+  decision            DecisionType
+  policyVersion       String       @map("policy_version")
+  ruleHitsJson        Json         @map("rule_hits_json")
+  requiredActionsJson Json?        @map("required_actions_json")
+  reservationId       String?      @map("reservation_id") @db.Uuid
+  createdAt           DateTime     @default(now()) @map("created_at")
+
+  @@unique([providerId, externalTxId])
+  @@index([providerId, conveniadoId, createdAt(sort: Desc)])
+  @@map("authorization_decisions")
+}
+
+model AntifraudSignal {
+  id          String   @id @default(uuid()) @db.Uuid
+  providerId  String   @map("provider_id") @db.Uuid
+  refuelTxId  String   @map("refuel_tx_id") @db.Uuid
+  signalType  String   @map("signal_type")
+  severity    String
+  detailsJson Json     @map("details_json")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([providerId, refuelTxId])
+  @@map("antifraud_signals")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Policy Engine
+// ──────────────────────────────────────────
+
+model PolicyConfig {
+  id                             String          @id @default(uuid()) @db.Uuid
+  providerId                     String          @map("provider_id") @db.Uuid
+  scopeType                      PolicyScopeType @map("scope_type")
+  scopeId                        String?         @map("scope_id") @db.Uuid
+  policyVersion                  String          @map("policy_version")
+  // Governanca
+  requireDriver                  Boolean         @default(false) @map("require_driver")
+  requireCostCenter              Boolean         @default(false) @map("require_cost_center")
+  allowedDaysJson                Json?           @map("allowed_days_json")
+  allowedTimeStart               String?         @map("allowed_time_start")
+  allowedTimeEnd                 String?         @map("allowed_time_end")
+  outOfScheduleMode              String          @default("REVIEW") @map("out_of_schedule_mode")
+  geofenceRequiredMode           String          @default("REVIEW") @map("geofence_required_mode")
+  // Credito
+  vehicleLimitMode               String          @default("DENY") @map("vehicle_limit_mode")
+  periodLimitMode                String          @default("DENY") @map("period_limit_mode")
+  maxTxAmount                    Decimal?        @map("max_tx_amount") @db.Decimal(12, 2)
+  lockAfterDays                  Int             @default(10) @map("lock_after_days")
+  // Antifraude
+  minRefuelIntervalMinutes       Int             @default(60) @map("min_refuel_interval_minutes")
+  tankOverfillFactor             Float           @default(1.1) @map("tank_overfill_factor")
+  odometerRegressionToleranceKm  Float           @default(5) @map("odometer_regression_tolerance_km")
+  kmPerLThresholdsJson           Json?           @map("km_per_l_thresholds_json")
+  priceTolerance                 Float           @default(0.02) @map("price_tolerance")
+  operatorExceptionThreshold     Int             @default(5) @map("operator_exception_threshold")
+  operatorWindowHours            Int             @default(6) @map("operator_window_hours")
+  reversalRateThreshold          Float           @default(0.1) @map("reversal_rate_threshold")
+  reversalWindowDays             Int             @default(7) @map("reversal_window_days")
+  reservationTtlSeconds          Int             @default(600) @map("reservation_ttl_seconds")
+  isActive                       Boolean         @default(true) @map("is_active")
+  createdAt                      DateTime        @default(now()) @map("created_at")
+
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@index([providerId, scopeType, scopeId])
+  @@map("policy_configs")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Billing Provider
+// ──────────────────────────────────────────
+
+model ProviderInvoice {
+  id             String                @id @default(uuid()) @db.Uuid
+  providerId     String                @map("provider_id") @db.Uuid
+  conveniadoId   String                @map("conveniado_id") @db.Uuid
+  periodStart    DateTime              @map("period_start")
+  periodEnd      DateTime              @map("period_end")
+  baseAmount     Decimal               @map("base_amount") @db.Decimal(12, 2)
+  feeAmount      Decimal               @default(0) @map("fee_amount") @db.Decimal(12, 2)
+  discountAmount Decimal               @default(0) @map("discount_amount") @db.Decimal(12, 2)
+  penaltyAmount  Decimal               @default(0) @map("penalty_amount") @db.Decimal(12, 2)
+  totalAmount    Decimal               @map("total_amount") @db.Decimal(12, 2)
+  status         ProviderInvoiceStatus @default(OPEN)
+  dueDate        DateTime              @map("due_date")
+  paidAt         DateTime?             @map("paid_at")
+  paidAmount     Decimal?              @map("paid_amount") @db.Decimal(12, 2)
+  externalRef    String?               @map("external_ref")
+  createdAt      DateTime              @default(now()) @map("created_at")
+
+  conveniado Conveniado          @relation(fields: [conveniadoId], references: [id])
+  items      ProviderInvoiceItem[]
+
+  @@index([providerId, conveniadoId, periodStart])
+  @@map("provider_invoices")
+}
+
+model ProviderInvoiceItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  invoiceId   String   @map("invoice_id") @db.Uuid
+  refuelTxId  String?  @map("refuel_tx_id") @db.Uuid
+  description String
+  quantity    Float
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 4)
+  totalAmount Decimal  @map("total_amount") @db.Decimal(12, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  invoice ProviderInvoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("provider_invoice_items")
+}
+
+// ──────────────────────────────────────────
+// DOMAIN: Evidence Vault
+// ──────────────────────────────────────────
+
+model EvidenceAsset {
+  id             String       @id @default(uuid()) @db.Uuid
+  providerId     String       @map("provider_id") @db.Uuid
+  refuelTxId     String       @map("refuel_tx_id") @db.Uuid
+  type           EvidenceType
+  storageKey     String       @map("storage_key")
+  fileHash       String       @map("file_hash")
+  fileSizeBytes  Int          @map("file_size_bytes")
+  retentionUntil DateTime     @map("retention_until")
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  refuelTx RefuelTransaction @relation(fields: [refuelTxId], references: [id])
+
+  @@index([providerId, refuelTxId])
+  @@map("evidence_assets")
+}
+
+// ──────────────────────────────────────────
+// READ MODELS (Materialized for performance)
+// ──────────────────────────────────────────
+
+model SpendDailySnapshot {
+  id           String   @id @default(uuid()) @db.Uuid
+  providerId   String   @map("provider_id") @db.Uuid
+  conveniadoId String   @map("conveniado_id") @db.Uuid
+  date         DateTime @db.Date
+  totalAmount  Decimal  @map("total_amount") @db.Decimal(12, 2)
+  txCount      Int      @default(0) @map("tx_count")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@unique([providerId, conveniadoId, date])
+  @@map("spend_daily_snapshots")
+}
+
+model VehiclePeriodSpend {
+  id           String   @id @default(uuid()) @db.Uuid
+  providerId   String   @map("provider_id") @db.Uuid
+  conveniadoId String   @map("conveniado_id") @db.Uuid
+  vehicleId    String   @map("vehicle_id") @db.Uuid
+  periodType   String   @map("period_type")
+  periodStart  DateTime @map("period_start") @db.Date
+  totalAmount  Decimal  @map("total_amount") @db.Decimal(12, 2)
+  txCount      Int      @default(0) @map("tx_count")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@unique([providerId, vehicleId, periodType, periodStart])
+  @@map("vehicle_period_spends")
+}
+
+model OperatorStats {
+  id                String   @id @default(uuid()) @db.Uuid
+  providerId        String   @map("provider_id") @db.Uuid
+  operatorUserId    String   @map("operator_user_id") @db.Uuid
+  windowStart       DateTime @map("window_start")
+  totalTransactions Int      @default(0) @map("total_transactions")
+  totalReversals    Int      @default(0) @map("total_reversals")
+  totalExceptions   Int      @default(0) @map("total_exceptions")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@unique([providerId, operatorUserId, windowStart])
+  @@map("operator_stats")
 }

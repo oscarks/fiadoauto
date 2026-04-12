@@ -70,11 +70,34 @@ describe('AuthService', () => {
     );
   });
 
-  it('should deny blocked provider login', async () => {
+  it('should deny suspended provider login (FULL_BLOCK)', async () => {
     repository.findUserByEmail.mockResolvedValue({
       id: 'user-1',
       passwordHash: 'hash',
-      provider: { status: 'BLOCKED' },
+      providerId: 'provider-1',
+      actorType: 'PROVIDER_USER',
+      provider: { status: 'SUSPENDED_SAAS_FULL' },
+      status: 'ACTIVE',
+      roles: [],
+    });
+    passwordService.verify.mockReturnValue(true);
+
+    await expect(
+      service.login({
+        email: 'test@fiadoauto.com',
+        password: 'secret',
+        ipAddress: '127.0.0.1',
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('should deny cancelled provider login', async () => {
+    repository.findUserByEmail.mockResolvedValue({
+      id: 'user-1',
+      passwordHash: 'hash',
+      providerId: 'provider-1',
+      actorType: 'PROVIDER_USER',
+      provider: { status: 'CANCELLED' },
       status: 'ACTIVE',
       roles: [],
     });

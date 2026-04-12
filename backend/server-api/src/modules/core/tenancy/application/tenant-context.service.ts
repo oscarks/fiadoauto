@@ -10,7 +10,7 @@ interface RequestWithAuth {
 export class TenantContextService {
   constructor(@Inject(REQUEST) private readonly request: RequestWithAuth) {}
 
-  get providerId(): string | undefined {
+  get providerId(): string | null | undefined {
     return this.request.authContext?.providerId;
   }
 

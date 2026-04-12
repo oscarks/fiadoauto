@@ -1,7 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { RequestIdInterceptor } from './common/interceptors/request-id.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 const DEFAULT_CORS_ORIGINS = [
   'http://localhost:5000',
@@ -57,6 +61,11 @@ async function bootstrap() {
 
   app.setGlobalPrefix('');
 
+  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalInterceptors(
+    new RequestIdInterceptor(),
+    new LoggingInterceptor(),
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -64,6 +73,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('FiadoAuto API')
+    .setDescription('API da plataforma FiadoAuto — Gestão de Crédito, Antifraude e Frota')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, swaggerDocument);
 
   app.enableShutdownHooks();
 

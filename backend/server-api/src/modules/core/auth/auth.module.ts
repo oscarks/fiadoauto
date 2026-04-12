@@ -21,6 +21,6 @@ import { AuthController } from './presentation/auth.controller';
   ],
   controllers: [AuthController],
   providers: [AuthService, PasswordService, TokenService, AuthRepository],
-  exports: [TokenService, JwtModule],
+  exports: [AuthService, PasswordService, TokenService, JwtModule],
 })
 export class AuthModule {}

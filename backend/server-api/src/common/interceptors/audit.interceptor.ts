@@ -44,7 +44,8 @@ export class AuditInterceptor implements NestInterceptor {
 
         await this.auditService.log({
           providerId: request.authContext.providerId,
-          userId: request.authContext.sub,
+          actorUserId: request.authContext.sub,
+          actorType: request.authContext.actorType,
           action,
           entityType: 'http_request',
           details: {

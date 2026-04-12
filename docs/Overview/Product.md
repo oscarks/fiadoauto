@@ -182,6 +182,44 @@ database "PostgreSQL"
   utils
 ```
 
+## 5.1 Descrição das Aplicações
+
+### Backend
+
+| Aplicação | Stack | Descrição |
+|-----------|-------|-----------|
+| **server-api** | NestJS + Prisma + PostgreSQL | API principal do sistema. Monólito modular com Clean Architecture, responsável por autenticação, multitenancy, crédito, ledger, policy engine, billing e todas as regras de negócio. |
+
+### Frontends
+
+| Aplicação | Stack | Descrição |
+|-----------|-------|-----------|
+| **portal-solution** | Vue 3 + Vuetify | Portal público da solução. Página institucional, catálogo de planos SaaS e registro de novos providers. |
+| **portal-provider** | Vue 3 + Vuetify | Portal do provider (posto/oficina), white-label. Gestão de convênios, crédito, faturas, frota, políticas antifraude e dashboards operacionais. |
+| **portal-conveniado** | Vue 3 + Vuetify | Portal da empresa conveniada, white-label do provider. Consulta de saldo, extrato, faturas, gestão de veículos e motoristas. |
+| **portal-acception** | Vue 3 + Vuetify | Portal administrativo da Acception (dona do SaaS). Gestão de tenants, planos, métricas, suporte e impersonation auditada. |
+
+### Mobile
+
+| Aplicação | Stack | Descrição |
+|-----------|-------|-----------|
+| **app-frentista** | Flutter | App do frentista para autorização de abastecimento online, captura de evidências (foto hodômetro, geolocalização) e step-up de segurança. |
+| **app-mecanico** | Flutter | App do mecânico (Fase 3). Registro de OS integrada ao crédito, evidências de serviço (fotos, assinatura) e diagnóstico IA. |
+
+### Serviços
+
+| Aplicação | Stack | Descrição |
+|-----------|-------|-----------|
+| **ia-service** | Python + FastAPI + UV | Serviço de IA stateless (Fase 2+). Score de crédito (assíncrono), detecção de fraude transacional (síncrono leve), limite dinâmico e explicabilidade. Recebe features do backend, retorna scores com model_version e reason_codes. |
+
+### Packages (compartilhados)
+
+| Package | Stack | Descrição |
+|---------|-------|-----------|
+| **shared-types** | TypeScript | Tipos e interfaces compartilhados entre backend e frontends (DTOs, enums, contratos de API). |
+| **ui-components** | Vue 3 + Vuetify | Componentes visuais reutilizáveis entre os portais frontend. |
+| **utils** | TypeScript | Funções utilitárias compartilhadas (formatação, validação, helpers). |
+
 ---
 
 # 5️⃣ Multitenancy

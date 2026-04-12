@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProviderStatus {
+  PENDING
+  TRIAL
+  ACTIVE
+  SUSPENDED
+  BLOCKED
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum ActorType {
+  ACCEPTION_USER
+  PROVIDER_USER
+  CONVENIADO_USER
+}
+
+model Provider {
+  id          String         @id @default(uuid()) @db.Uuid
+  name        String
+  tradeName   String         @map("trade_name")
+  cnpj        String         @unique
+  email       String
+  phone       String
+  status      ProviderStatus @default(PENDING)
+  planId      String?        @map("plan_id") @db.Uuid
+  trialEndsAt DateTime?      @map("trial_ends_at")
+  activatedAt DateTime?      @map("activated_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  users         User[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@map("providers")
+}
+
+model User {
+  id              String      @id @default(uuid()) @db.Uuid
+  name            String
+  email           String      @unique
+  passwordHash    String      @map("password_hash")
+  providerId      String      @map("provider_id") @db.Uuid
+  conveniadoId    String?     @map("conveniado_id") @db.Uuid
+  status          UserStatus  @default(PENDING)
+  actorType       ActorType   @map("actor_type")
+  activationToken String?     @map("activation_token")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  provider      Provider       @relation(fields: [providerId], references: [id])
+  roles         UserRole[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@index([providerId])
+  @@index([conveniadoId])
+  @@map("users")
+}
+
+model Role {
+  id          String     @id @default(uuid()) @db.Uuid
+  name        String     @unique
+  description String
+  users       UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  userId String @map("user_id") @db.Uuid
+  roleId String @map("role_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  userId    String    @map("user_id") @db.Uuid
+  providerId String   @map("provider_id") @db.Uuid
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user     User     @relation(fields: [userId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@index([userId])
+  @@index([providerId])
+  @@map("refresh_tokens")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  providerId String   @map("provider_id") @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id") @db.Uuid
+  details    Json
+  ipAddress  String   @map("ip_address")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  provider Provider @relation(fields: [providerId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@index([providerId, createdAt])
+  @@index([userId, createdAt])
+  @@map("audit_log")
+}

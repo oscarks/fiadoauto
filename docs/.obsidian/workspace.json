@@ -43,12 +43,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Overview/Product.md",
+                "file": "Features/Phase1-Specification.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Product"
+              "title": "Phase1-Specification"
             }
           }
         ],
@@ -75,7 +75,7 @@
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
-              "title": "Files"
+              "title": "Explorador de arquivos"
             }
           },
           {
@@ -205,26 +205,41 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
-      "canvas:Create new canvas": false,
-      "daily-notes:Open today's daily note": false,
-      "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "switcher:Abrir a troca rápida": false,
+      "graph:Abrir visualização em gráfico": false,
+      "canvas:Criar novo canvas": false,
+      "daily-notes:Abrir a nota de hoje": false,
+      "templates:Inserir modelo": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Criar nova base": false,
+      "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
   "active": "3943c66967aebb58",
   "lastOpenFiles": [
+    "Guidelines/ui-templates.md",
+    "Features/Phase1-Specification.md",
+    "Features/F1-Implementation-Plan.md",
+    "Features/F1-S1-Review.md",
+    "Features/F1-S1-Review.md.tmp.240771.1772851161051",
+    "Features/F1-S1-Review.md.tmp.240771.1772851156321",
+    "Features/F1-S1-Review.md.tmp.240771.1772850510059",
+    "Features/F1-Implementation-Plan.md.tmp.240771.1772847930456",
+    "Guidelines",
     "Overview/Backlog.md",
-    "Overview/Glossary.md",
+    "Features/Phase1-Specification.md.tmp.240771.1772844779853",
     "Overview/Product.md",
+    "Overview/Product.md.tmp.240771.1772841663744",
+    "Architecture/Architecture Overview.md",
+    "Overview/Risk Analysis.md",
+    "Overview/Modules.md",
+    "Overview/Glossary.md",
+    "Prompts/Development.md",
+    "Prompts/Review.md",
+    "Prompts/Setup.md",
     "Features/Multitenancy/Requirements.md",
     "Features/SAAS/Requirements.md",
-    "Architecture/Architecture Overview.md",
-    "Overview/Modules.md",
     "Features/Antifraude-Regras Deterministicas/Reqirements.md",
-    "Overview/Risk Analysis.md",
     "Features/SASS-Provider/Requirements.md",
     "Overview/Solucao.md",
     "Architecture/ADR/ADR-011 — Trial e suspensão configuráveis por plano-política.md",
@@ -234,23 +249,8 @@
     "Architecture/ADR/ADR-007 — IA separada em Python - FastAPI com payload stateless.md",
     "Architecture/ADR/ADR-006 — Policy Engine determinístico no backend (Fase 1).md",
     "Architecture/ADR/ADR-005 — Ledger append-only com saldos materializados.md",
-    "Architecture/ADR/ADR-004 — Arquitetura monolito modular no backend (NestJS).md",
-    "Architecture/ADR/ADR-003 — Multitenancy Nível 2 - Empresa Conveniado.md",
-    "Architecture/ADR/ADR-002 — Multitenancy - Provider como tenant, Empresa como escopo.md",
-    "Architecture/ADR/ADR-001 — Multitenancy Nível 1 (Provider).md",
     "Architecture/ADR",
     "Features/Multitenancy",
-    "Features/SASS-Provider",
-    "Features/SAAS",
-    "Features/Antifraude-Regras Deterministicas",
-    "Features/Billing",
-    "Features",
-    "Architecture",
-    "Overview",
-    "architecture/Overview.md",
-    "Produto.md",
-    "Produto.backup.md",
-    "features/multitenancy/solution.md",
-    "features/antifraude-deterministica"
+    "Features/SASS-Provider"
   ]
 }

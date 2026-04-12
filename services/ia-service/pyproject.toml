@@ -1,0 +1,14 @@
+[project]
+name = "ia-service"
+version = "0.1.0"
+description = "Serviço de IA para score de crédito e detecção de fraude"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.135.1",
+    "uvicorn[standard]>=0.41.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+dev = "uvicorn app.main:app --reload --port 5010"

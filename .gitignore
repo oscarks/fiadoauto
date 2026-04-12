@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+*.egg-info/
+
+# Flutter
+mobile/app-frentista/.dart_tool/
+mobile/app-mecanico/.dart_tool/
+mobile/app-frentista/build/
+mobile/app-mecanico/build/
+
+# Prisma
+backend/server-api/prisma/migrations/
+
+# Logs
+*.log
+npm-debug.log*

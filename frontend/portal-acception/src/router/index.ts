@@ -10,6 +10,18 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: false },
   },
   {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/presentation/views/ForgotPasswordView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/presentation/views/ResetPasswordView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
     path: '/',
     component: AuthenticatedLayout,
     meta: { requiresAuth: true },
@@ -17,7 +29,27 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'home',
-        component: () => import('@/presentation/views/HomeView.vue'),
+        component: () => import('@/presentation/views/DashboardView.vue'),
+      },
+      {
+        path: 'providers',
+        name: 'providers',
+        component: () => import('@/presentation/views/ProvidersListView.vue'),
+      },
+      {
+        path: 'providers/:id',
+        name: 'provider-detail',
+        component: () => import('@/presentation/views/ProviderDetailView.vue'),
+      },
+      {
+        path: 'plans',
+        name: 'plans',
+        component: () => import('@/presentation/views/PlansListView.vue'),
+      },
+      {
+        path: 'audit-log',
+        name: 'audit-log',
+        component: () => import('@/presentation/views/AuditLogView.vue'),
       },
     ],
   },

@@ -109,6 +109,25 @@ const menuItems = computed<MenuItem[]>(() => [
     title: t('layout.menu.dashboard'),
     icon: 'mdi-view-dashboard',
     to: '/',
+    roles: ['ACCEPTION_ADMIN'],
+  },
+  {
+    title: t('layout.menu.providers'),
+    icon: 'mdi-domain',
+    to: '/providers',
+    roles: ['ACCEPTION_ADMIN'],
+  },
+  {
+    title: t('layout.menu.plans'),
+    icon: 'mdi-cash-multiple',
+    to: '/plans',
+    roles: ['ACCEPTION_ADMIN'],
+  },
+  {
+    title: t('layout.menu.auditLog'),
+    icon: 'mdi-clipboard-text-clock',
+    to: '/audit-log',
+    roles: ['ACCEPTION_ADMIN'],
   },
 ])
 

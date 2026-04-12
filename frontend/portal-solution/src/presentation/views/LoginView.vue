@@ -57,6 +57,15 @@
               >
                 {{ t('views.login.submit') }}
               </v-btn>
+
+              <div class="d-flex justify-space-between mt-4">
+                <router-link to="/forgot-password" class="text-decoration-none text-body-2">
+                  {{ t('views.login.forgotPassword') }}
+                </router-link>
+                <router-link to="/signup" class="text-decoration-none text-body-2">
+                  {{ t('views.login.noAccount') }}
+                </router-link>
+              </div>
             </v-form>
           </v-card-text>
         </v-card>

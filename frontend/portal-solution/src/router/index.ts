@@ -4,9 +4,39 @@ import AuthenticatedLayout from '@/presentation/layouts/AuthenticatedLayout.vue'
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/landing',
+    name: 'landing',
+    component: () => import('@/presentation/views/LandingView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/presentation/views/LoginView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('@/presentation/views/SignupView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/presentation/views/ForgotPasswordView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/presentation/views/ResetPasswordView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/confirm-email',
+    name: 'confirm-email',
+    component: () => import('@/presentation/views/ConfirmEmailView.vue'),
     meta: { requiresAuth: false },
   },
   {

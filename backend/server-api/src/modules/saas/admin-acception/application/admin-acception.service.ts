@@ -235,7 +235,7 @@ export class AdminAcceptService {
       action: 'SAAS_PLAN_UPDATED',
       entityType: 'SaasPlan',
       entityId: id,
-      details: { changes: input },
+      details: { changes: JSON.parse(JSON.stringify(input)) },
       ipAddress,
     });
 
@@ -283,9 +283,10 @@ export class AdminAcceptService {
 
     const subscription = await this.repository.activateSubscription(providerId, input.planId);
 
-    let invoice = null;
+    let invoiceResult: { id: string; status: string; paidAt: Date | null } | null = null;
     if (input.invoiceId) {
-      invoice = await this.repository.markInvoicePaid(input.invoiceId, new Date());
+      const inv = await this.repository.markInvoicePaid(input.invoiceId, new Date());
+      invoiceResult = { id: inv.id, status: inv.status, paidAt: inv.paidAt };
     }
 
     await this.auditService.log({
@@ -309,9 +310,7 @@ export class AdminAcceptService {
         currentPeriodStart: subscription.currentPeriodStart,
         currentPeriodEnd: subscription.currentPeriodEnd,
       },
-      invoice: invoice
-        ? { id: invoice.id, status: invoice.status, paidAt: invoice.paidAt }
-        : null,
+      invoice: invoiceResult,
     };
   }
 

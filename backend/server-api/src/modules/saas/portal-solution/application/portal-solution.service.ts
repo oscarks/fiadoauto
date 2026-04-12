@@ -79,7 +79,7 @@ export class PortalSolutionService {
         email: input.email,
         phone: input.phone,
         addressJson: input.address
-          ? { ...input.address, country: input.address.country ?? 'BR' }
+          ? ({ ...input.address, country: input.address.country ?? 'BR' } as Record<string, string>)
           : undefined,
       },
       admin: {

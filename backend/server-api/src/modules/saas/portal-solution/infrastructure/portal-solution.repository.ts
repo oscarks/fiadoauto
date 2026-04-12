@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../integrations/storage/prisma/prisma.service';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class PortalSolutionRepository {
       cnpj: string;
       email: string;
       phone?: string;
-      addressJson?: Record<string, unknown>;
+      addressJson?: Prisma.InputJsonValue;
     };
     admin: {
       name: string;

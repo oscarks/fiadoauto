@@ -57,6 +57,12 @@
               >
                 {{ t('views.login.submit') }}
               </v-btn>
+
+              <div class="text-center mt-4">
+                <router-link to="/forgot-password" class="text-decoration-none text-body-2">
+                  {{ t('views.login.forgotPassword') }}
+                </router-link>
+              </div>
             </v-form>
           </v-card-text>
         </v-card>

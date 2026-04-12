@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
@@ -13,12 +14,16 @@ import { RbacModule } from './modules/core/rbac/rbac.module';
 import { TenancyModule } from './modules/core/tenancy/tenancy.module';
 import { ObservabilityModule } from './modules/integrations/observability/observability.module';
 import { PrismaModule } from './modules/integrations/storage/prisma/prisma.module';
+import { PortalSolutionModule } from './modules/saas/portal-solution/portal-solution.module';
+import { AdminAcceptModule } from './modules/saas/admin-acception/admin-acception.module';
+import { BillingSaasModule } from './modules/saas/billing-saas/billing-saas.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -40,6 +45,10 @@ import { PrismaModule } from './modules/integrations/storage/prisma/prisma.modul
     RbacModule,
     TenancyModule,
     I18nModule,
+    // SaaS modules (Sprint 02)
+    PortalSolutionModule,
+    AdminAcceptModule,
+    BillingSaasModule,
   ],
   providers: [
     {

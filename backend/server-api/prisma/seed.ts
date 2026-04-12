@@ -238,102 +238,122 @@ async function seedPostoAndorinha(): Promise<void> {
       },
     });
 
-    await prisma.priceList.create({
+    const existingPrice = await prisma.priceList.findFirst({
+      where: { providerId: provider.id, productId: product.id },
+    });
+    if (!existingPrice) {
+      await prisma.priceList.create({
+        data: {
+          providerId: provider.id,
+          productId: product.id,
+          pricePerUnit: p.price,
+          validFrom: new Date('2026-04-01'),
+        },
+      });
+    }
+  }
+
+  // 6. Policy config padrao do provider
+  const existingPolicy = await prisma.policyConfig.findFirst({
+    where: { providerId: provider.id, scopeType: 'PROVIDER' },
+  });
+  if (!existingPolicy) {
+    await prisma.policyConfig.create({
       data: {
         providerId: provider.id,
-        productId: product.id,
-        pricePerUnit: p.price,
-        validFrom: new Date('2026-04-01'),
+        scopeType: 'PROVIDER',
+        policyVersion: '1.0',
+        requireDriver: false,
+        requireCostCenter: false,
+        allowedDaysJson: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+        allowedTimeStart: '06:00',
+        allowedTimeEnd: '22:00',
+        outOfScheduleMode: 'REVIEW',
+        geofenceRequiredMode: 'REVIEW',
+        vehicleLimitMode: 'DENY',
+        periodLimitMode: 'DENY',
+        maxTxAmount: 1500.00,
+        lockAfterDays: 10,
+        minRefuelIntervalMinutes: 60,
+        tankOverfillFactor: 1.1,
+        odometerRegressionToleranceKm: 5,
+        kmPerLThresholdsJson: {
+          CAR: { min: 5, max: 18 },
+          TRUCK: { min: 2, max: 6 },
+          MOTO: { min: 20, max: 45 },
+          VAN: { min: 5, max: 14 },
+          BUS: { min: 2, max: 5 },
+        },
+        priceTolerance: 0.05,
+        operatorExceptionThreshold: 5,
+        operatorWindowHours: 6,
+        reversalRateThreshold: 0.1,
+        reversalWindowDays: 7,
+        reservationTtlSeconds: 600,
       },
     });
   }
 
-  // 6. Policy config padrao do provider
-  await prisma.policyConfig.create({
-    data: {
-      providerId: provider.id,
-      scopeType: 'PROVIDER',
-      policyVersion: '1.0',
-      requireDriver: false,
-      requireCostCenter: false,
-      allowedDaysJson: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
-      allowedTimeStart: '06:00',
-      allowedTimeEnd: '22:00',
-      outOfScheduleMode: 'REVIEW',
-      geofenceRequiredMode: 'REVIEW',
-      vehicleLimitMode: 'DENY',
-      periodLimitMode: 'DENY',
-      maxTxAmount: 1500.00,
-      lockAfterDays: 10,
-      minRefuelIntervalMinutes: 60,
-      tankOverfillFactor: 1.1,
-      odometerRegressionToleranceKm: 5,
-      kmPerLThresholdsJson: {
-        CAR: { min: 5, max: 18 },
-        TRUCK: { min: 2, max: 6 },
-        MOTO: { min: 20, max: 45 },
-        VAN: { min: 5, max: 14 },
-        BUS: { min: 2, max: 5 },
-      },
-      priceTolerance: 0.05,
-      operatorExceptionThreshold: 5,
-      operatorWindowHours: 6,
-      reversalRateThreshold: 0.1,
-      reversalWindowDays: 7,
-      reservationTtlSeconds: 600,
-    },
-  });
-
   // 7. Plano de convenio
-  const convenioPlan = await prisma.convenioplan.create({
-    data: {
-      providerId: provider.id,
-      name: 'Plano Padrao',
-      version: 1,
-      isActive: true,
-      creditLimit: 10000.00,
-      vehicleCreditLimit: 3000.00,
-      periodLimitsJson: { daily: 2000, weekly: 8000, monthly: 10000 },
-      paymentDueDays: 30,
-      lateFeePercent: 2,
-      lateInterestPercent: 1,
-      lockAfterDays: 10,
-      requireDriver: false,
-      requireCostCenter: false,
-      allowedDaysJson: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
-      allowedTimeStart: '06:00',
-      allowedTimeEnd: '22:00',
-      minRefuelIntervalMinutes: 60,
-      requireOdometer: true,
-      maxTxAmount: 1500.00,
-      geofenceRequired: false,
-      discountPercent: 0,
-      adminFeePercent: 0,
-    },
+  let convenioPlan = await prisma.convenioplan.findFirst({
+    where: { providerId: provider.id, name: 'Plano Padrao' },
   });
+  if (!convenioPlan) {
+    convenioPlan = await prisma.convenioplan.create({
+      data: {
+        providerId: provider.id,
+        name: 'Plano Padrao',
+        version: 1,
+        isActive: true,
+        creditLimit: 10000.00,
+        vehicleCreditLimit: 3000.00,
+        periodLimitsJson: { daily: 2000, weekly: 8000, monthly: 10000 },
+        paymentDueDays: 30,
+        lateFeePercent: 2,
+        lateInterestPercent: 1,
+        lockAfterDays: 10,
+        requireDriver: false,
+        requireCostCenter: false,
+        allowedDaysJson: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+        allowedTimeStart: '06:00',
+        allowedTimeEnd: '22:00',
+        minRefuelIntervalMinutes: 60,
+        requireOdometer: true,
+        maxTxAmount: 1500.00,
+        geofenceRequired: false,
+        discountPercent: 0,
+        adminFeePercent: 0,
+      },
+    });
+  }
 
   // 8. Conveniado — Transportadora Estrela
-  const conveniado = await prisma.conveniado.create({
-    data: {
-      providerId: provider.id,
-      planId: convenioPlan.id,
-      legalName: 'Transportadora Estrela Ltda',
-      cnpj: '98765432000199',
-      email: 'financeiro@estrelatransportes.com.br',
-      phone: '11999880001',
-      responsibleName: 'Maria Estrela',
-      status: ConveniadoStatus.ACTIVE,
-      billingCycleDay: 5,
-      addressJson: {
-        street: 'Rua das Industrias',
-        number: '300',
-        neighborhood: 'Distrito Industrial',
-        city: 'Campinas',
-        state: 'SP',
-        zipCode: '13054-200',
-      },
-    },
+  let conveniado = await prisma.conveniado.findFirst({
+    where: { providerId: provider.id, cnpj: '98765432000199' },
   });
+  if (!conveniado) {
+    conveniado = await prisma.conveniado.create({
+      data: {
+        providerId: provider.id,
+        planId: convenioPlan.id,
+        legalName: 'Transportadora Estrela Ltda',
+        cnpj: '98765432000199',
+        email: 'financeiro@estrelatransportes.com.br',
+        phone: '11999880001',
+        responsibleName: 'Maria Estrela',
+        status: ConveniadoStatus.ACTIVE,
+        billingCycleDay: 5,
+        addressJson: {
+          street: 'Rua das Industrias',
+          number: '300',
+          neighborhood: 'Distrito Industrial',
+          city: 'Campinas',
+          state: 'SP',
+          zipCode: '13054-200',
+        },
+      },
+    });
+  }
 
   // 9. User admin do conveniado
   const conveniadoAdminRole = await prisma.role.findUnique({ where: { name: 'CONVENIADO_ADMIN' } });
@@ -360,16 +380,21 @@ async function seedPostoAndorinha(): Promise<void> {
   });
 
   // 10. Credit account
-  await prisma.creditAccount.create({
-    data: {
-      providerId: provider.id,
-      conveniadoId: conveniado.id,
-      creditLimit: 10000.00,
-      currentBalance: 0,
-      reservedAmount: 0,
-      status: CreditAccountStatus.ACTIVE,
-    },
+  const existingCreditAccount = await prisma.creditAccount.findFirst({
+    where: { providerId: provider.id, conveniadoId: conveniado.id },
   });
+  if (!existingCreditAccount) {
+    await prisma.creditAccount.create({
+      data: {
+        providerId: provider.id,
+        conveniadoId: conveniado.id,
+        creditLimit: 10000.00,
+        currentBalance: 0,
+        reservedAmount: 0,
+        status: CreditAccountStatus.ACTIVE,
+      },
+    });
+  }
 
   // 11. Veiculos
   const dieselS10 = await prisma.product.findUnique({

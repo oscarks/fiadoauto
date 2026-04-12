@@ -43,12 +43,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Features/Phase1-Specification.md",
+                "file": "Prompts/Development.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Phase1-Specification"
+              "title": "Development"
             }
           }
         ],
@@ -217,9 +217,9 @@
   },
   "active": "3943c66967aebb58",
   "lastOpenFiles": [
-    "Guidelines/ui-templates.md",
-    "Features/Phase1-Specification.md",
     "Features/F1-Implementation-Plan.md",
+    "Features/Phase1-Specification.md",
+    "Guidelines/ui-templates.md",
     "Features/F1-S1-Review.md",
     "Features/F1-S1-Review.md.tmp.240771.1772851161051",
     "Features/F1-S1-Review.md.tmp.240771.1772851156321",
